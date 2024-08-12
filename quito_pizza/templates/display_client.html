@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ client }}{% endblock title %}
+{% block content %}
+    <div class="container">
+        <p style="font-size: 1.7em; margin-top: 1em; margin-bottom: 1em;" class= "text-center"><strong>{{ client | capfirst }}</strong></p>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Email:</strong> {{ client.email }}</li>
+            <li class="list-group-item"><strong>Cedúla:</strong> {{ client.dni }}</li> 
+            <li class="list-group-item"><strong>Número de telefono:</strong> {{ client.phone_number }}</li> 
+            <li class="list-group-item"><strong>Dirección:</strong> {{ client.address }}</li> 
+        </ul>
+        <div class="d-flex justify-content-center">
+            <a href="/client">
+                <button style="margin-top: 3em; margin-bottom: 3em;" class="btn btn-outline-primary btn-lg btn-block">
+                    <h6>Regresar</h6>
+                </button>
+            </a>
+        </div>
+    </div>
+{% endblock content %}

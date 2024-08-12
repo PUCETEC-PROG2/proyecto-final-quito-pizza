@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ pizza }}{% endblock title %}
+{% block content %}
+    <div class="container">
+        <p style="font-size: 1.7em; margin-top: 1em; margin-bottom: 1em;" class= "text-center"><strong>Pizza {{ pizza | capfirst }}</strong></p>
+        <div class="d-flex justify-content-center">
+            <img src="{{ pizza.picture_pizza.url }}" alt="{{ pizza }}" style="width:300; height:300px; margin-bottom: 2em;">
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Tamaño:</strong> {{ pizza.get_pizza_size_display }}</li>
+            <li class="list-group-item"><strong>Tipo de masa:</strong> {{ pizza.get_pizza_dough_display }}</li> 
+            {% if pizza.ingredient_1 != '-' %}
+                <li class="list-group-item"><strong>1er ingrediente:</strong> {{ pizza.get_ingredient_1_display }}</li>
+            {%endif%}
+            {% if pizza.ingredient_2 != '-' %}
+                <li class="list-group-item"><strong>2do ingrediente:</strong> {{ pizza.get_ingredient_2_display }}</li> 
+            {%endif%}
+                {% if pizza.ingredient_3 != '-' %}
+                <li class="list-group-item"><strong>3er ingrediente:</strong> {{ pizza.get_ingredient_3_display }}</li> 
+            {%endif%}
+            {% if pizza.ingredient_4 != '-' %}
+                <li class="list-group-item"><strong>4to ingrediente:</strong> {{ pizza.get_ingredient_4_display }}</li>
+            {%endif%}
+            <li class="list-group-item"><strong>Precio: ${{ pizza.price_pizza }}</strong></li> 
+        </ul>
+        <div class="d-flex justify-content-center">
+            <a href="/pizza">
+                <button style="margin-top: 3em; margin-bottom: 3em;" class="btn btn-outline-primary btn-lg btn-block">
+                    <h6>Return</h6>
+                </button>
+            </a>
+        </div>
+    </div>
+{% endblock content %}
