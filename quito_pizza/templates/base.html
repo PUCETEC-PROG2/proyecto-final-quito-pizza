@@ -17,9 +17,6 @@
     </script>
 </head>
 <body>
-    <audio controls>
-        <source src="{% static 'papas_pizzeria.mpga' %}" type="audio/mpeg">
-    </audio> 
     <div class="container">
         <div class="bg-primary text-white p-3 text-center">
             <a href="/" style= "text-decoration: none; color: inherit;">
@@ -53,7 +50,7 @@
                             <a class="nav-link" href="{%url "quito_pizza:list_client" %}">Clientes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Compras</a>
+                            <a class="nav-link" href="{%url "quito_pizza:list_purchase" %}">Compras</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{%url "logout" %}" onclick="confirmScript(event, 'logout?')">Logout</a>
@@ -69,5 +66,8 @@
         </nav>
     </div>
     {% block content %}{% endblock content %}
+    <audio controls>
+        <source src="{% static 'papas_pizzeria.mpga' %}" type="audio/mpeg">
+    </audio> 
 </body>
 </html>
