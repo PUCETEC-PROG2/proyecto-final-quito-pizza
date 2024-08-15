@@ -113,27 +113,24 @@ class Purchase(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
 
     def __str__(self) -> str:
-        return f"Venta {self.id} - {self.fecha} - {self.client}"
+        return f"Venta {self.id} - {self.date} - {self.client}"
     
     def update_total(self):
-        self.total = sum(detail.subtotal() for detail in self.details.all())
+        self.total = sum(detail.subtotal() for detail in self.detail.all())
         self.save()
 
 
 class Purchase_Detail(models.Model):
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, related_name='detail')
     pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE)
+    amount_pizza = models.PositiveIntegerField()
+    unit_price_pizza = models.DecimalField(max_digits=10, decimal_places=2)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField()
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    amount_product = models.PositiveIntegerField()
+    unit_price_product = models.DecimalField(max_digits=10, decimal_places=2)
     
     def subtotal(self):
-        return self.amount * self.unit_price
-    
-    def save(self, *args, **kwargs):
-        self.unit_price = self.product.price
-        super().save(*args, **kwargs)
-        self.venta.update_total()
+        return self.amount_pizza * self.unit_price_pizza + self.amount_product * self.unit_price_product
     
     def __str__(self) -> str:
-        return f"{self.amount} x {self.product.product_name} en Venta {self.purchase.id}"
+        return f"{self.amount_product} x {self.product.product_name} y {self.amount_pizza} x {self.pizza.pizza_name} en Venta {self.purchase.id}"

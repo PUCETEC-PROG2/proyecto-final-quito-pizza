@@ -1,6 +1,7 @@
 from django import forms
-from .models import Pizza, Category, Client
+from .models import Pizza, Category, Client, Product, Purchase, Purchase_Detail
 from django.core.validators import RegexValidator
+from django.forms import formset_factory
 
 class PizzaForm(forms.ModelForm):
     class Meta:
@@ -42,7 +43,7 @@ class PizzaForm(forms.ModelForm):
             'price_pizza': forms.NumberInput(attrs={
                 'class':'form-control'
             }),
-            'picture': forms.ClearableFileInput(attrs={
+            'picture_pizza': forms.ClearableFileInput(attrs={
                 'class':'form-control'
             })
         }
@@ -113,3 +114,57 @@ class ClientForm(forms.ModelForm):
                 'required':'False'
             })
         }
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+        widgets = {
+            'product_name': forms.TextInput(attrs={
+                'class':'form-control'
+            }),
+            'category': forms.Select(attrs={
+                'class':'form-control'
+            }),
+            'price_product': forms.NumberInput(attrs={
+                'class':'form-control'
+            }),
+            'picture_products': forms.ClearableFileInput(attrs={
+                'class':'form-control'
+            })
+        }
+
+class PurchaseForm(forms.ModelForm):
+    class Meta:
+        model = Purchase
+        fields = ['client', 'date']  # Agregar el campo cliente
+        widgets = {
+            'client': forms.Select(attrs={
+                'class':'form-control'
+            }),
+            'date': forms.DateTimeInput(attrs={
+                'type': 'date',
+                'class':'form-control'
+            })
+        }
+
+class PurchaseDetailForm(forms.ModelForm):
+    class Meta:
+        model = Purchase_Detail
+        fields = ['pizza', 'amount_pizza', 'product', 'amount_product']
+        widgets = {
+            'pizza': forms.Select(attrs={
+                'class':'form-control'
+            }),
+            'amount_pizza': forms.NumberInput(attrs={
+                'class':'form-control'
+            }),
+            'product': forms.Select(attrs={
+                'class':'form-control'
+            }),
+            'amount_product': forms.NumberInput(attrs={
+                'class':'form-control'
+            }),
+        }
+
+DetailPurchaseFormSet = formset_factory(PurchaseDetailForm, extra=1)

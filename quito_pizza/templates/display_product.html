@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ product }}{% endblock title %}
+{% block content %}
+    <div class="container">
+        <p style="font-size: 1.7em; margin-top: 1em; margin-bottom: 1em;" class= "text-center"><strong>{{ product | capfirst }}</strong></p>
+        <div class="d-flex justify-content-center">
+            <img src="{{ product.picture_products.url }}" alt="{{ product }}" style="width:300; height:300px; margin-bottom: 2em;">
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Categoría:</strong> {{ product.category }}</li>
+            <li class="list-group-item"><strong>Precio: ${{ product.price_product }}</strong></li> 
+        </ul>
+        <div class="d-flex justify-content-center">
+            <a href="/product">
+                <button style="margin-top: 3em; margin-bottom: 3em;" class="btn btn-outline-primary btn-lg btn-block">
+                    <h6>Regresar</h6>
+                </button>
+            </a>
+        </div>
+    </div>
+{% endblock content %}

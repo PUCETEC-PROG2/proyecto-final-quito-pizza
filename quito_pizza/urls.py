@@ -19,5 +19,13 @@ urlpatterns = [
     path("client/add/", views.add_client, name="add_client"),
     path("client/edit/<int:client_id>/", views.edit_client, name="edit_client"),
     path("client/delete/<int:client_id>/", views.delete_client, name="delete_client"),
+    path("product/", views.list_product, name="list_product"),
+    path("product/<int:product_id>/", views.product, name="product"),
+    path("product/add/", views.add_product, name="add_product"),
+    path("product/edit/<int:product_id>/", views.edit_product, name="edit_product"),
+    path("product/delete/<int:product_id>/", views.delete_product, name="delete_product"),
+    path("purchase/", views.list_purchase, name="list_purchase"),
+    path("purchase/add/", views.add_purchase, name="add_purchase"),
+    path("purchase/<int:purchase_id>/", views.purchase, name="purchase"),
     path("login/", views.CustomLoginView.as_view(), name="login"),
 ]
