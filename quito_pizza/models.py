@@ -133,4 +133,13 @@ class Purchase_Detail(models.Model):
         return self.amount_pizza * self.unit_price_pizza + self.amount_product * self.unit_price_product
     
     def __str__(self) -> str:
-        return f"{self.amount_product} x {self.product.product_name} y {self.amount_pizza} x {self.pizza.pizza_name} en Venta {self.purchase.id}"
+        return f"{self.amount} x {self.product.product_name} en Venta {self.purchase.id}"
+
+#sonido ambiental
+
+class AudioFile(models.Model):
+    title = models.CharField(max_length=100)
+    audio = models.FileField(upload_to='audio')
+
+    def __str__(self):
+        return self.title
