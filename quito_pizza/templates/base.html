@@ -9,24 +9,80 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script>
         function confirmScript(event, type) {
-            var result = confirm(`Are you sure you want to ${type}`);
+            var result = confirm(`Estás segur@ que quieres ${type}`);
             if (!result) {
                 event.preventDefault();
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('purchase_form');
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const totalPurchaseSpan = document.getElementById('total_purchase');
+
+            function updateTotal() {
+                let total = 0;
+                checkboxes.forEach((checkbox) => {
+                    const row = checkbox.closest('tr');
+                    const amountInput = row.querySelector('input[type="number"]');
+                    const price = parseFloat(row.cells[1].innerText.replace('$', ''));
+
+                    if (checkbox.checked) {
+                        amountInput.disabled = false;
+                        const amountValue = parseInt(amountInput.value) || 0;
+                        total += price * amountValue;
+                    } else {
+                        amountInput.disabled = true;
+                        amountInput.value = 1;
+                    }
+                });
+                totalPurchaseSpan.innerText = total.toFixed(2);
+            }
+
+            function validateForm(event) {
+                let atLeastOneChecked = false;
+                checkboxes.forEach((checkbox) => {
+                    if (checkbox.checked) {
+                        atLeastOneChecked = true;
+                    }
+                });
+
+                if (!atLeastOneChecked) {
+                    event.preventDefault();
+                    alert('Debe seleccionar al menos un producto para guardar la venta.');
+                }
+            }
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateTotal);
+            });
+
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', updateTotal);
+            });
+
+            form.addEventListener('submit', validateForm);
+
+            updateTotal();
+        });
     </script>
+    <style>
+        body {
+            font-family: 'Italianno', cursive;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="bg-primary text-white p-3 text-center">
+        <div class="bg-primary text-white p-3 text-center" style="height: 105px;">
             <a href="/" style= "text-decoration: none; color: inherit;">
-                <img src="{% static 'nombre.png' %}" alt="Descripción de la imagen" width="200" height="150">
+                <img src="{% static 'nombre.png' %}" alt="texto logo" height="100" style="height:95px; object-fit: scale-down;">
             </a>
         </div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="font-family: 'Italianno', cursive;">
+        <nav class="navbar navbar-expand-lg navbar-light bg-primary" style="font-family: 'Italianno', cursive;">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{% url 'quito_pizza:index' %}">
-                    <img src="{% static 'pizza_quito.png' %}" alt="Descripción de la imagen" width="35" height="60">
+                    <img src="{% static 'pizza_quito.png' %}" alt="Descripción de la imagen" height="45">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>

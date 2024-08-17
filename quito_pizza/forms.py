@@ -7,12 +7,26 @@ class PizzaForm(forms.ModelForm):
     class Meta:
         model = Pizza
         fields = '__all__'
+        labels = {
+            'pizza_name': 'Pizza',
+            'pizza_size': 'Tamaño',
+            'pizza_dough': 'Tipo de masa',
+            'ingredient_1': 'Ingrediente 1',
+            'ingredient_2': 'Ingrediente 2',
+            'ingredient_3': 'Ingrediente 3',
+            'ingredient_4': 'Ingrediente 4',
+            'description': 'Descripción',
+            'category': 'Categoría',
+            'price_pizza': 'Precio',
+            'picture_pizza': 'Foto'
+        }
         widgets = {
             'pizza_name': forms.TextInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder': 'Ingresa el nombre de la pizza'
             }),
             'pizza_size': forms.Select(attrs={
-                'class':'form-control'
+                'class':'form-control',
             }),
             'pizza_dough': forms.Select(attrs={
                 'class':'form-control'
@@ -35,13 +49,15 @@ class PizzaForm(forms.ModelForm):
             }),
             'description': forms.TextInput(attrs={
                 'class':'form-control',
-                'required':'False'
+                'required':'False',
+                'placeholder': 'Ingresa una descripción'
             }),
             'category': forms.Select(attrs={
                 'class':'form-control'
             }),
             'price_pizza': forms.NumberInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder': 'Ingresa el precio'
             }),
             'picture_pizza': forms.ClearableFileInput(attrs={
                 'class':'form-control'
@@ -52,9 +68,13 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = '__all__'
+        labels = {
+            'name_category': 'Categoría'
+        }
         widgets = {
             'name_category': forms.TextInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder':'Ingresa una categoría'
             }),
         }
 
@@ -91,15 +111,24 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = '__all__'
+        labels = {
+            'name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo Electrónico',
+            'address': 'Dirección'
+        }
         widgets = {
             'name': forms.TextInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder': 'Ingrese el nombre del cliente',
             }),
             'last_name': forms.TextInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder': 'Ingrese el apellido del cliente',
             }),
             'email': forms.EmailInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder': 'Ingrese su número de teléfono',
             }),
             'dni': forms.TextInput(attrs={
                 'class':'form-control',
@@ -111,7 +140,8 @@ class ClientForm(forms.ModelForm):
             }),
             'address': forms.TextInput(attrs={
                 'class':'form-control',
-                'required':'False'
+                'required':'False',
+                'placeholder': 'Ingrese la dirección del cliente',
             })
         }
 
@@ -119,15 +149,27 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = '__all__'
+        labels = {
+            'product_name': 'Producto',
+            'category': 'Categoría',
+            'price_product': 'Precio',
+            'picture_products': 'Foto'
+        }
         widgets = {
             'product_name': forms.TextInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder': 'Ingresa el producto'
             }),
             'category': forms.Select(attrs={
                 'class':'form-control'
             }),
             'price_product': forms.NumberInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder': 'Ingresa el precio'
+            }),
+            'stock': forms.NumberInput(attrs={
+                'class':'form-control',
+                'placeholder': 'Ingresa el stock'
             }),
             'picture_products': forms.ClearableFileInput(attrs={
                 'class':'form-control'
@@ -143,8 +185,8 @@ class PurchaseForm(forms.ModelForm):
                 'class':'form-control'
             }),
             'date': forms.DateTimeInput(attrs={
-                'type': 'date',
-                'class':'form-control'
+                'class':'form-control',
+                'type': 'datetime-local'
             })
         }
 
@@ -157,13 +199,15 @@ class PurchaseDetailForm(forms.ModelForm):
                 'class':'form-control'
             }),
             'amount_pizza': forms.NumberInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'min': 1
             }),
             'product': forms.Select(attrs={
                 'class':'form-control'
             }),
             'amount_product': forms.NumberInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'min': 1
             }),
         }
 

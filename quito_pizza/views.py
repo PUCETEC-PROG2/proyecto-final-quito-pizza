@@ -8,6 +8,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from django.utils import timezone
+import pytz
 
 # Create your views here.
 def index(request):
@@ -184,48 +186,100 @@ def delete_client(request, client_id):
 
 @login_required
 def list_purchase(request):
-    purchases = Purchase_Detail.objects.order_by('purchase')
+    purchases = Purchase.objects.order_by('date')
     template = loader.get_template('list_purchase.html')
     return HttpResponse(template.render({'purchases': purchases}, request))
 
+@login_required
 def add_purchase(request):
+    clients = Client.objects.all()
+    pizzas = Pizza.objects.all()
+    products = Product.objects.all()
+    
+    local_timezone = pytz.timezone('America/Bogota')
+    today = timezone.now().astimezone(local_timezone).strftime('%Y-%m-%dT%H:%M')
+
+    
     if request.method == 'POST':
-        purchase_form = PurchaseForm(request.POST)
-        formset = DetailPurchaseFormSet(request.POST)
-
-        if purchase_form.is_valid() and formset.is_valid():
-            # Crear una nueva venta con la fecha y cliente proporcionados por el usuario
-            purchase = purchase_form.save()
-
-            # Procesar cada formulario del formset
-            for form in formset:
-                if form.cleaned_data:
-                    pizza = form.cleaned_data['pizza']
-                    amount_pizza = form.cleaned_data['amount_pizza']
-                    product = form.cleaned_data['product']
-                    amount_product = form.cleaned_data['amount_product']
-                    
-                    # Crear el detalle de venta
-                    Purchase_Detail.objects.create(
-                        purchase=purchase,
-                        pizza=pizza,
-                        amount_pizza=amount_pizza,
-                        unit_price_pizza=pizza.price_pizza,
-                        product=product,
-                        amount_product=amount_product,
-                        unit_price_product=product.price_product
-                    )
+        id_client = request.POST.get('client')
+        date = request.POST.get('date')
+        selected_pizzas = request.POST.getlist('pizzas[]')
+        amount_pizzas = request.POST.getlist('amount_pizzas[]')
+        selected_products = request.POST.getlist('products[]')
+        amount_products = request.POST.getlist('amount_products[]')
+        
+        client = Client.objects.get(id=id_client)
             
-            # Actualizar el total de la venta
-            purchase.update_total()
+        
+        purchase = Purchase.objects.create(
+            date = date,
+            total = 0,
+            client = client,
+        )
+        
+        total = 0
+        
+# Create a list to collect all details to be created
+        purchase_details = []
+
+        # Handle pizzas
+        for i, pizza_id in enumerate(selected_pizzas):
+            pizza = Pizza.objects.get(id=pizza_id)
+            amount_pizza = int(amount_pizzas[i])
+            total_price = pizza.price_pizza * amount_pizza
+            total += total_price
+
+            purchase_details.append({
+                'pizza': pizza,
+                'amount_pizza': amount_pizza,
+                'product': None,
+                'amount_product': 0
+            })
+
+        # Handle products
+        for i, product_id in enumerate(selected_products):
+            product = Product.objects.get(id=product_id)
+            amount_product = int(amount_products[i])
+            total_price = product.price_product * amount_product
+            total += total_price
+
+            # If there's already a pizza detail without a product, update it
+            if i < len(purchase_details):
+                purchase_details[i]['product'] = product
+                purchase_details[i]['amount_product'] = amount_product
+            else:
+                # Otherwise, create a new detail just for the product
+                purchase_details.append({
+                    'pizza': None,
+                    'amount_pizza': 0,
+                    'product': product,
+                    'amount_product': amount_product
+                })
+
+        # Create Purchase_Detail instances
+        for detail in purchase_details:
+            Purchase_Detail.objects.create(
+                purchase=purchase,
+                pizza=detail['pizza'],
+                amount_pizza=detail['amount_pizza'],
+                product=detail['product'],
+                amount_product=detail['amount_product']
+            )
             
-            return redirect('quito_pizza:list_purchase')  # Redirigir a la vista de detalles o confirmación
-    else:
-        purchase_form = PurchaseForm()
-        formset = DetailPurchaseFormSet()
+            
+        purchase.total = total
+        purchase.save()
+        
+        return redirect('quito_pizza:list_purchase')
 
-    return render(request, 'purchase_form.html', {'purchase_form': purchase_form, 'formset': formset})
-
+    context = {
+        'clients': clients,
+        'pizzas': pizzas,
+        'products': products,
+        'today': today
+    }
+    return render(request, 'purchase_form.html', context)
+            
 def purchase(request, purchase_id):
     purchase = get_object_or_404(Purchase_Detail, pk = purchase_id)
     template = loader.get_template('display_purchase.html')

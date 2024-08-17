@@ -2,9 +2,14 @@
 {% load static %}
 {% block title %}Inicio{% endblock title %}
 {% block content %}
-    <h1 style="font-size: 20px; margin-left: 50px; font-family: 'Italianno', cursive;">Bienvenido a la pagina de Quito Pizza, mediante esta pagina web puede realizar el ingreso de productos, pizzas, etc. Para poder realizar el ingreso o cambios debera ingresar a traves de su cuenta.</h1>
-
-    <p style="font-size: 1.7em; margin-top: 1em; margin-bottom: 1em;" class= "text-center">Elija que desea realizar a continuacion:</p>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <img src="{% static 'pizza_quito.png' %}" alt="Descripción de la imagen" height="200">
+    </div>
+    <div class="bg-secondary text-center text-white p-4 rounded shadow-sm my-1 mx-auto" style="max-width: 1000px; max-height: 100px;">
+        <h1 class="h5">
+            Bienvenido a la página de Quito Pizza. Mediante esta página web puede realizar el ingreso de productos, pizzas, etc. Para poder realizar el ingreso o cambios deberá ingresar a través de su cuenta.
+        </h1>
+    </div>
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -12,15 +17,15 @@
                     <div class="col-6 mb-3">
                         <a href="pizza/">
                             <button class="btn btn-outline-primary btn-lg btn-block" width="128" height="128">
-                                <img src="{% static 'pizza.jpg' %}" class="img-fluid">
+                                <i class="fa-solid fa-pizza-slice"></i>
                                 <span>Pizzas</span>
                             </button>
                         </a>
                     </div>
                     <div class="col-6 mb-3">
-                        <a href="/">
+                        <a href="product/">
                         <button class="btn btn-outline-primary btn-lg btn-block" width="128" height="128">
-                            <img src="{% static 'productos.jpg' %}" class="img-fluid">
+                            <i class="fa-solid fa-mug-hot"></i>
                             <span>Productos</span>
                         </button>
                         </a>
@@ -28,7 +33,7 @@
                     <div class="col-6 mb-3">
                         <a href="category/">
                         <button class="btn btn-outline-primary btn-lg btn-block"  width="128" height="128">
-                            <img src="{% static 'CategoriaOk.jpg' %}" class="img-fluid">
+                            <i class="fa-solid fa-list"></i>
                             <span>Categorias</span>
                         </button>
                         </a>
@@ -36,7 +41,7 @@
                     <div class="col-6 mb-3">
                         <a href="client/">
                         <button class="btn btn-outline-primary btn-lg btn-block"  width="128" height="128">
-                            <img src="{% static 'cliente.jpeg' %}" class="img-fluid">
+                            <i class="fa-solid fa-children"></i>
                             <span>Clientes</span>
                         </button>
                         </a>

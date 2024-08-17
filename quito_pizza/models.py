@@ -103,37 +103,29 @@ class Product(models.Model):
     product_name = models.CharField(max_length=30, null=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price_product = models.DecimalField(max_digits=10, decimal_places=2, null = False)
+    stock = models.IntegerField()
     picture_products = models.ImageField(upload_to='picture_products')
 
     def __str__(self) -> str:
         return f'{self.product_name}'
 class Purchase(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    date = models.DateField(null=False)
+    date = models.DateTimeField()
     total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
 
     def __str__(self) -> str:
         return f"Venta {self.id} - {self.date} - {self.client}"
     
-    def update_total(self):
-        self.total = sum(detail.subtotal() for detail in self.detail.all())
-        self.save()
-
 
 class Purchase_Detail(models.Model):
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, related_name='detail')
-    pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE)
-    amount_pizza = models.PositiveIntegerField()
-    unit_price_pizza = models.DecimalField(max_digits=10, decimal_places=2)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    amount_product = models.PositiveIntegerField()
-    unit_price_product = models.DecimalField(max_digits=10, decimal_places=2)
-    
-    def subtotal(self):
-        return self.amount_pizza * self.unit_price_pizza + self.amount_product * self.unit_price_product
+    pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE, blank=True, null=True)
+    amount_pizza = models.PositiveIntegerField(blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+    amount_product = models.PositiveIntegerField(blank=True, null=True)
     
     def __str__(self) -> str:
-        return f"{self.amount} x {self.product.product_name} en Venta {self.purchase.id}"
+        return f"{self.id} en Venta {self.purchase.id}"
 
 #sonido ambiental
 

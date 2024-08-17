@@ -5,12 +5,10 @@
     <div class="container">
         <p style="font-size: 1.7em; margin-top: 1em; margin-bottom: 1em;" class= "text-center"><strong>{{ purchase.purchase | capfirst }}</strong></p>
         <ul class="list-group">
-            <li class="list-group-item"><strong>Pizza:</strong> {{ purchase.amount_pizza }}x {{ purchase.pizza }}</li>
-            <li class="list-group-item"><strong>Producto:</strong> {{ purchase.amount_product }}x {{ purchase.product }}</li> 
-            <li class="list-group-item"><strong>Total:</strong> {{ purchase.purchase.total }}</li> 
+            <li class="list-group-item"><strong>Cliente:</strong> <a href="/client/{{ purchase.purchase.client.id }}" style=" margin-right: 1em;">{{ purchase.purchase.client }}</a>{% if purchase.pizza != None %}<br><strong>Pizza:</strong> {{ purchase.amount_pizza }}x {{ purchase.pizza }}{% endif %}{% if purchase.product != None %}<br><strong>Producto:</strong> {{ purchase.amount_product }}x {{ purchase.product }}{% endif %}<br><strong>Total: </strong>${{ purchase.purchase.total }}</li>
         </ul>
         <div class="d-flex justify-content-center">
-            <a href="/client">
+            <a href="/purchase">
                 <button style="margin-top: 3em; margin-bottom: 3em;" class="btn btn-outline-primary btn-lg btn-block">
                     <h6>Regresar</h6>
                 </button>

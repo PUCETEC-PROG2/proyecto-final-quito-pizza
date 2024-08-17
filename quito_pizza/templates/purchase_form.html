@@ -1,104 +1,93 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}Agregar Compra{% endblock %}
+{% block title %}Agregar Venta{% endblock title %}
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center" style="margin-top: 5em; margin-bottom: 5em;">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title text-center"><strong>Agregar Compra</strong></h2>
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            
-                            <!-- Formulario de Compra -->
-                            {{ purchase_form.as_p }}
-                            
-                            <!-- Formset de Detalle de Compra -->
-                            <div id="detalles-container">
-                                {{ formset.management_form }}
-                                {% for form in formset %}
-                                    <div class="form-group detalle-form">
-                                        {{ form.as_p }}
-                                    </div>
+<div class="container-md">
+    <div class="card mb-3" style="margin: 0 auto; margin-top: 2em;">
+        <div class="card-header text-center">
+            <h3 class="card-title mb-0">Agregar Compra</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" id="purchase_form">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="client" class="form-label">Cliente</label>
+                    <select name="client" id="client" class="form-control" required>
+                        <option value="" disabled selected>Seleccione un cliente</option>
+                        {% for client in clients %}
+                            <option value="{{ client.id }}">{{ client }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="date" class="form-label">Fecha</label>
+                    <input type="datetime-local" name="date" id="date" class="form-control" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="mt-4 mb-3"><strong>Pizzas</strong></h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 40%;">Pizza</th>
+                                    <th style="width: 20%;">Precio Unitario</th>
+                                    <th style="width: 20%;">Cantidad</th>
+                                    <th style="width: 20%;"><i class="fa-regular fa-square-check"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pizza in pizzas %}
+                                <tr>
+                                    <td class="text-center">{{ pizza }}</td>
+                                    <td class="text-center">${{ pizza.price_pizza }}</td>
+                                    <td class="text-center">
+                                        <input type="number" name="amount_pizzas[]" value="1" min="1" class="form-control">
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" name="pizzas[]" value="{{ pizza.id }}" class="form-check-input">
+                                    </td>
+                                </tr>
                                 {% endfor %}
-                            </div>
-
-                            <div class="d-flex justify-content-center">
-                                <button id="agregar-detalle" type="button" class="btn btn-outline-secondary btn-lg">
-                                    <h6>Agregar Otro</h6>
-                                </button>
-                            </div>
-
-                            <div class="d-flex justify-content-center mt-3">
-                                <h4>Total: $<span id="total">0.00</span></h4>
-                            </div>
-
-                            <div class="d-flex justify-content-center mt-3">
-                                <button class="btn btn-outline-primary btn-lg btn-block" type="submit">
-                                    <h6>Enviar</h6>
-                                </button>
-                            </div>
-                        </form>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mt-4 mb-3"><strong>Productos</strong></h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 40%;">Producto</th>
+                                    <th style="width: 20%;">Precio Unitario</th>
+                                    <th style="width: 20%;">Cantidad</th>
+                                    <th style="width: 20%;"><i class="fa-regular fa-square-check"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td class="text-center">{{ product }}</td>
+                                    <td class="text-center">${{ product.price_product }}</td>
+                                    <td class="text-center">
+                                        <input type="number" name="amount_products[]" value="1" min="1" class="form-control">
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" name="products[]" value="{{ product.id }}" class="form-check-input">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </div>                
+                
+                <h5 class="text-right mt-4">Total: $<span id="total_purchase">0.00</span></h5>
+
+                <button type="submit" class="btn btn-primary mt-3 mb-0">Guardar</button>
+            </form>
         </div>
     </div>
+</div>
 
-    <script>
-        function actualizarTotal() {
-            let total = 0;
-            document.querySelectorAll('#detalles-container .detalle-form').forEach(form => {
-                // Obtén los valores de los campos del formulario actual
-                const cantidadPizza = parseFloat(form.querySelector('input[name$=amount_pizza]').value) || 0;
-                const precioUnitarioPizza = parseFloat(form.querySelector('input[name$=unit_price_pizza]').value) || 0;
-                const cantidadProducto = parseFloat(form.querySelector('input[name$=amount_product]').value) || 0;
-                const precioUnitarioProducto = parseFloat(form.querySelector('input[name$=unit_price_product]').value) || 0;
-
-                // Calcula el total para el formulario actual y acumula
-                total += (cantidadPizza * precioUnitarioPizza) + (cantidadProducto * precioUnitarioProducto);
-            });
-            // Actualiza el total en el HTML
-            document.getElementById('total').textContent = total.toFixed(2);
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.getElementById('detalles-container');
-            const originalDetail = container.querySelector('.detalle-form');
-            const template = originalDetail ? originalDetail.innerHTML.replace(/form-0-/g, '') : '';
-
-            container.addEventListener('input', function(event) {
-                // Solo actualiza el total cuando se modifiquen campos relevantes
-                if (event.target.matches('input[name$=amount_pizza], input[name$=unit_price_pizza], input[name$=amount_product], input[name$=unit_price_product]')) {
-                    actualizarTotal();
-                }
-            });
-
-            document.getElementById('agregar-detalle').addEventListener('click', function() {
-                const totalForms = parseInt(document.querySelector('#id_form-TOTAL_FORMS').value, 10);
-                const nuevoDetalle = document.createElement('div');
-                nuevoDetalle.classList.add('form-group', 'detalle-form');
-                
-                nuevoDetalle.innerHTML = `
-                    <input type="hidden" name="form-${totalForms}-DELETE" value="0">
-                    ${template.replace(/form-0-/g, `form-${totalForms}-`)}
-                    <button type="button" class="btn btn-danger btn-sm eliminar-detalle">Eliminar</button>
-                `;
-
-                container.appendChild(nuevoDetalle);
-                document.querySelector('#id_form-TOTAL_FORMS').value = totalForms + 1;
-                actualizarTotal();
-            });
-
-            container.addEventListener('click', function(event) {
-                if (event.target.classList.contains('eliminar-detalle')) {
-                    const detalle = event.target.closest('.detalle-form');
-                    detalle.querySelector('input[name$="-DELETE"]').value = "1";
-                    detalle.style.display = "none";
-                    actualizarTotal();
-                }
-            });
-        });
-    </script>
-{% endblock %}
+{% endblock content %}
