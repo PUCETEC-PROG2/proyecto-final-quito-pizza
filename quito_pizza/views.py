@@ -36,6 +36,7 @@ def product(request, product_id):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def client(request, client_id):
     client = get_object_or_404(Client, pk = client_id)
     template = loader.get_template('display_client.html')
@@ -170,7 +171,7 @@ def add_client(request):
 def edit_client(request, client_id):
     client = get_object_or_404(Client, pk = client_id) 
     if request.method =='POST':
-        form = CategoryForm(request.POST, instance=client)
+        form = ClientForm(request.POST, instance=client)
         if form.is_valid():
             form.save()
             return redirect('quito_pizza:list_client')
@@ -207,7 +208,6 @@ def add_purchase(request):
         amount_pizzas = request.POST.getlist('amount_pizzas[]')
         selected_products = request.POST.getlist('products[]')
         amount_products = request.POST.getlist('amount_products[]')
-        
         client = Client.objects.get(id=id_client)
             
         
@@ -219,10 +219,10 @@ def add_purchase(request):
         
         total = 0
         
-# Create a list to collect all details to be created
+        # Crea una lista para almacenar todos los detalles
         purchase_details = []
 
-        # Handle pizzas
+        # Maneja las pizzas
         for i, pizza_id in enumerate(selected_pizzas):
             pizza = Pizza.objects.get(id=pizza_id)
             amount_pizza = int(amount_pizzas[i])
@@ -236,27 +236,31 @@ def add_purchase(request):
                 'amount_product': 0
             })
 
-        # Handle products
+        # Maneja los productos
         for i, product_id in enumerate(selected_products):
             product = Product.objects.get(id=product_id)
             amount_product = int(amount_products[i])
             total_price = product.price_product * amount_product
             total += total_price
 
-            # If there's already a pizza detail without a product, update it
+            # si ya hay un detalle pizza sin un producto, lo actualiza
             if i < len(purchase_details):
                 purchase_details[i]['product'] = product
                 purchase_details[i]['amount_product'] = amount_product
             else:
-                # Otherwise, create a new detail just for the product
+                # Si no crea otro detail solo para el producto
                 purchase_details.append({
                     'pizza': None,
                     'amount_pizza': 0,
                     'product': product,
                     'amount_product': amount_product
                 })
-
-        # Create Purchase_Detail instances
+            
+            product.stock -= amount_product
+            if product.stock < 0:
+                product.stock = 0
+            product.save()
+        # Crea na instancia de purchase_detail
         for detail in purchase_details:
             Purchase_Detail.objects.create(
                 purchase=purchase,
@@ -265,7 +269,6 @@ def add_purchase(request):
                 product=detail['product'],
                 amount_product=detail['amount_product']
             )
-            
             
         purchase.total = total
         purchase.save()
@@ -280,13 +283,16 @@ def add_purchase(request):
     }
     return render(request, 'purchase_form.html', context)
             
+
+@login_required
 def purchase(request, purchase_id):
-    purchase = get_object_or_404(Purchase_Detail, pk = purchase_id)
-    template = loader.get_template('display_purchase.html')
+    purchase = get_object_or_404(Purchase, pk=purchase_id)
+    purchase_details = Purchase_Detail.objects.filter(purchase=purchase)
     context = {
-        'purchase': purchase
+        'purchase': purchase,
+        'purchase_details': purchase_details
     }
-    return HttpResponse(template.render(context, request))
+    return render(request, 'display_purchase.html', context)
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'

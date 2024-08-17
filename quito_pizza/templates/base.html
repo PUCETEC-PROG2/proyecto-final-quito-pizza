@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script>
         function confirmScript(event, type) {
-            var result = confirm(`Estás segur@ que quieres ${type}`);
+            var result = confirm(`Estás seguro/a que quieres ${type}`);
             if (!result) {
                 event.preventDefault();
             }
@@ -109,13 +109,13 @@
                             <a class="nav-link" href="{%url "quito_pizza:list_purchase" %}">Compras</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{%url "logout" %}" onclick="confirmScript(event, 'logout?')">Logout</a>
+                            <a class="nav-link" href="{%url "logout" %}" onclick="confirmScript(event, 'cerrar sesión?')">Logout</a>
                         </li>
                         {% else %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{%url "quito_pizza:login" %}">Login</a>
                             </li>
-                        {%endif%}
+                        {% endif %}
                     </ul>
                 </div>
             </div>

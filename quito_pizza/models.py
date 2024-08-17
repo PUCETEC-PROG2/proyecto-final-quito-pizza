@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import connection, models
+from django.forms import ValidationError
 #pizza, bebidas, complemento, postre
 class Category(models.Model):
     name_category = models.CharField(max_length=16, null=False)
@@ -12,6 +13,47 @@ class Client(models.Model):
     dni = models.CharField(max_length=10, null=False)
     phone_number = models.CharField(max_length=10, null=False)
     address = models.CharField(max_length=150, null=True)
+        
+    def clean(self):
+        super().clean()
+        if not self.validate_dni(self.dni):
+            raise ValidationError('La cédula proporcionada no es válida.')
+        if not self.validate_phone_number(self.phone_number):
+            raise ValidationError('El número de teléfono no es válido.')
+        if self.pk:
+            if Client.objects.filter(dni=self.dni).exclude(pk=self.pk).exists():
+                raise ValidationError({'dni': 'Esta cédula ya está registrada'})
+        else:
+            if Client.objects.filter(dni=self.dni).exists():
+                raise ValidationError({'dni': 'Esta cédula ya está registrada'})
+        if self.pk:
+            if Client.objects.filter(email=self.email).exclude(pk=self.pk).exists():
+                raise ValidationError({'email': 'Este correo electrónico ya está registrado'})
+        else:
+            if Client.objects.filter(email=self.email).exists():
+                raise ValidationError({'email': 'Este correo electrónico ya está registrado'})
+        if self.pk:
+            if Client.objects.filter(phone_number=self.phone_number).exclude(pk=self.pk).exists():
+                raise ValidationError({'phone_number': 'Este número telefónico ya está registrado'})
+        else:
+            if Client.objects.filter(phone_number=self.phone_number).exists():
+                raise ValidationError({'phone_number': 'Este número telefónico ya está registrado'})
+
+    def validate_dni(self, dni):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT validate_dni(%s)", [dni])
+            is_valid = cursor.fetchone()[0]
+        return is_valid
+
+    def validate_phone_number(self, phone_number):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT validate_phone_number(%s)", [phone_number])
+            is_valid = cursor.fetchone()[0]
+        return is_valid
+
+    def save(self, *args, **kwargs):
+        self.clean()  # Validar antes de guardar
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f'{self.name} {self.last_name}'
@@ -33,7 +75,7 @@ class Pizza(models.Model):
     pizza_dough = models.CharField(max_length=14, choices=PIZZA_DOUGH, null=False)
     INGREDIENT_1 = {
         ('P', 'Pepperoni'),
-        ('J', 'Jamon'),
+        ('J', 'Jamón'),
         ('C', 'Choclo'),
         ('SI', 'Salchica Italiana'),
         ('SA', 'Salchicha Alemana'),
@@ -48,7 +90,7 @@ class Pizza(models.Model):
     ingredient_1 = models.CharField(max_length=20, choices=INGREDIENT_1, blank=True)
     INGREDIENT_2 = {
         ('P', 'Pepperoni'),
-        ('J', 'Jamon'),
+        ('J', 'Jamón'),
         ('C', 'Choclo'),
         ('SI', 'Salchica Italiana'),
         ('SA', 'Salchicha Alemana'),
@@ -63,7 +105,7 @@ class Pizza(models.Model):
     ingredient_2 = models.CharField(max_length=20, choices=INGREDIENT_2, blank=True)
     INGREDIENT_3 = {
         ('P', 'Pepperoni'),
-        ('J', 'Jamon'),
+        ('J', 'Jamón'),
         ('C', 'Choclo'),
         ('SI', 'Salchica Italiana'),
         ('SA', 'Salchicha Alemana'),
@@ -78,7 +120,7 @@ class Pizza(models.Model):
     ingredient_3 = models.CharField(max_length=20, choices=INGREDIENT_3, blank=True)
     INGREDIENT_4 = {
         ('P', 'Pepperoni'),
-        ('J', 'Jamon'),
+        ('J', 'Jamón'),
         ('C', 'Choclo'),
         ('SI', 'Salchica Italiana'),
         ('SA', 'Salchicha Alemana'),
@@ -114,7 +156,7 @@ class Purchase(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
 
     def __str__(self) -> str:
-        return f"Venta {self.id} - {self.date} - {self.client}"
+        return f"{self.id} - {self.date} - {self.client}"
     
 
 class Purchase_Detail(models.Model):

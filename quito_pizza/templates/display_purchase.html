@@ -3,9 +3,26 @@
 {% block title %}{{ purchase.date }}{% endblock title %}
 {% block content %}
     <div class="container">
-        <p style="font-size: 1.7em; margin-top: 1em; margin-bottom: 1em;" class= "text-center"><strong>{{ purchase.purchase | capfirst }}</strong></p>
+        <p style="font-size: 1.7em; margin-top: 1em; margin-bottom: 1em;" class="text-center"><strong>{{ purchase.date|capfirst }}</strong></p>
         <ul class="list-group">
-            <li class="list-group-item"><strong>Cliente:</strong> <a href="/client/{{ purchase.purchase.client.id }}" style=" margin-right: 1em;">{{ purchase.purchase.client }}</a>{% if purchase.pizza != None %}<br><strong>Pizza:</strong> {{ purchase.amount_pizza }}x {{ purchase.pizza }}{% endif %}{% if purchase.product != None %}<br><strong>Producto:</strong> {{ purchase.amount_product }}x {{ purchase.product }}{% endif %}<br><strong>Total: </strong>${{ purchase.purchase.total }}</li>
+            {% for detail in purchase_details %}
+                <li class="list-group-item">
+                    {% if detail.pizza %}
+                        <strong>Pizzas:</strong> {{ detail.amount_pizza }}x {{ detail.pizza }}<br>
+                    {% endif %}
+                    {% if detail.product %}
+                        <strong>Productos:</strong> {{ detail.amount_product }}x {{ detail.product }}
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li class="list-group-item">No hay detalles de compra.</li>
+            {% endfor %}
+            <li class="list-group-item">
+                <strong>Cliente:</strong> 
+                <a href="/client/{{ purchase.client.id }}" style="margin-right: 1em;">{{ purchase.client }}</a>
+                <br>
+                <strong>Total:</strong> ${{ purchase.total }}
+            </li>
         </ul>
         <div class="d-flex justify-content-center">
             <a href="/purchase">

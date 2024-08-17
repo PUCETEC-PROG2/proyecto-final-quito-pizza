@@ -9,7 +9,10 @@
         </div>
         <ul class="list-group">
             <li class="list-group-item"><strong>Categoría:</strong> {{ product.category }}</li>
-            <li class="list-group-item"><strong>Precio: ${{ product.price_product }}</strong></li> 
+            {% if user.is_authenticated %}
+                <li class="list-group-item"><strong>En stock: </strong>{{ product.stock }}</li>  
+            {% endif %}
+            <li class="list-group-item"><strong>Precio: ${{ product.price_product }}</strong></li>
         </ul>
         <div class="d-flex justify-content-center">
             <a href="/product">

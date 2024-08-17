@@ -28,7 +28,7 @@
                                     <a href="{{ pizza.id }}" class="btn btn-primary mr-2"><i class="fa-solid fa-eye"></i></a>
                                     {% if user.is_authenticated %}
                                         <a href="edit/{{ pizza.id }}" class="btn btn-primary mr-2"><i class="fa-solid fa-pencil"></i></a>
-                                        <a href="delete/{{ pizza.id }}" onclick="confirmScript(event, 'delete {{ pizza }}? This action is not reversible.')" class="btn btn-danger mr-2"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="delete/{{ pizza.id }}" onclick="confirmScript(event, 'borrar la pizza {{ pizza }}? Esta acción no se puede deshacer.')" class="btn btn-danger mr-2"><i class="fa-solid fa-trash"></i></a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -39,7 +39,7 @@
             <div class="d-flex justify-content-center">
                 <a href="/">
                     <button style="margin-bottom: 3em; margin-top: 3em;" class="btn btn-outline-primary btn-lg btn-block">
-                        <h6>Return</h6>
+                        <h6>Regresar</h6>
                     </button>
                 </a>
             </div>

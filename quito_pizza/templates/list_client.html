@@ -17,11 +17,11 @@
             {% for client in clients %}
                 <li class="list-group-item">
                     <a href="{{ client.id }}" style=" margin-right: 1em;">
-                        {{ client }}
+                        {{ client }} - {{ client.dni }}
                     </a>
                     {% if user.is_authenticated %}
                         <a href="edit/{{ client.id }}" class="btn btn-link"><i class="fa-solid fa-pencil"></i></a>
-                        <a href="delete/{{ client.id }}" onclick="confirmScript(event, 'delete {{ client }}? This action is not reversible.')" class="btn btn-link"><i class="fa-solid fa-trash"></i></a>
+                        <a href="delete/{{ client.id }}" onclick="confirmScript(event, 'borrar al cliente {{ client }}? Esta acción no se puede deshacer.')" class="btn btn-link"><i class="fa-solid fa-trash"></i></a>
                     {% endif %}
                 </li>
             {% endfor %}
@@ -29,7 +29,7 @@
         <div class="d-flex justify-content-center">
             <a href="/">
                 <button style="margin-top: 3em; margin-bottom: 3em;" class="btn btn-outline-primary btn-lg btn-block">
-                    <h6>Return</h6>
+                    <h6>Regresar</h6>
                 </button>
             </a>
         </div>

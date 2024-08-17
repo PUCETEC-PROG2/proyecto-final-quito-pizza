@@ -128,7 +128,7 @@ class ClientForm(forms.ModelForm):
             }),
             'email': forms.EmailInput(attrs={
                 'class':'form-control',
-                'placeholder': 'Ingrese su número de teléfono',
+                'placeholder': 'Ingrese su correo electrónico',
             }),
             'dni': forms.TextInput(attrs={
                 'class':'form-control',
@@ -144,6 +144,17 @@ class ClientForm(forms.ModelForm):
                 'placeholder': 'Ingrese la dirección del cliente',
             })
         }
+    def clean_dni(self):
+        dni = self.cleaned_data.get('dni')
+        if not Client().validate_dni(dni):
+            raise forms.ValidationError('La cédula proporcionada no es válida.')
+        return dni
+    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if not Client().validate_phone_number(phone_number):
+            raise forms.ValidationError('El número de teléfono no es válido.')
+        return phone_number
 
 class ProductForm(forms.ModelForm):
     class Meta:

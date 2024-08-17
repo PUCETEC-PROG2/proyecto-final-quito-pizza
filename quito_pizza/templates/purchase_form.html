@@ -66,16 +66,21 @@
                             </thead>
                             <tbody>
                                 {% for product in products %}
+                                {% if product.stock > 0 %}
                                 <tr>
                                     <td class="text-center">{{ product }}</td>
                                     <td class="text-center">${{ product.price_product }}</td>
                                     <td class="text-center">
                                         <input type="number" name="amount_products[]" value="1" min="1" class="form-control">
+                                        {% if product.stock < 4 %}
+                                            <div class="text-danger mt-2" style="font-size:12px;">¡Quedan pocas unidades! ({{ product.stock }})</div>
+                                        {% endif %}
                                     </td>
                                     <td class="text-center">
                                         <input type="checkbox" name="products[]" value="{{ product.id }}" class="form-check-input">
                                     </td>
                                 </tr>
+                                {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>
